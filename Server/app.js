@@ -62,7 +62,7 @@ app.patch('/books/:bookId/checkout/:user_id', async function (req, res) {
 //IT WORKS!
 //i'm updating trello with what works 
 //sound good
-//i'll commit this
+//i'll commit this, thanks, can you shoot me the git repo name when done?
 
  app.patch('/books/:bookId/return', function (req,res) {
      knex('books')
