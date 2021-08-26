@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  Front:
+    build: Front/
+    depends_on:
+      - 'Server'
+    ports: 
+      - '3000:3000'
+    network: 
+      - my_network
+
+  Server:
+    build: Server/
+    depends_on:
+      - 'database'
+    ports:
+      - '8080:8080'
+    network: 
+      - my_network
+    command: sh -c "npx knex migrate:latest && npx knex seed:run && npm start"
+
+  database:
+    image: 'postgres:latest'
+    container: SDILibrary
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: SDILibrary
+    ports: 
+      - '5433:5433'
+    volumes:
+      - $(pwd):/var/lib/postgresql/data
+  networks:
+    my_network:
+      driver: 'bridge' 
