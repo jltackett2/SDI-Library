@@ -10,6 +10,7 @@ app.get('/books', function (req,res) {
     knex
     .select('*')
     .from('books')
+    .orderBy('id','asc')
     .then((data) => res.status(200).json(data))
     .catch((err) => {
         res.status(404).json({
@@ -66,7 +67,7 @@ app.patch('/books/:bookId/checkout/:user_id', async function (req, res) {
 
  app.patch('/books/:bookId/return', function (req,res) {
      knex('books')
-     .where({id:req.param.bookId})
+     .where({id:req.params.bookId})
      .update({
          user_id:null,
          due_date:null
@@ -76,6 +77,26 @@ app.patch('/books/:bookId/checkout/:user_id', async function (req, res) {
     .catch((err) => res.send(err))
  })
 
+ //add a new book to the library if all fields are present
 
+app.post('/books/new/:title/:isbn/:author', function(req,res) {
+  if (req.params.title && req.params.isbn && req.params.author) {
+    knex('books')
+    .insert({
+      title:req.params.title,
+      author:req.params.author,
+      ISBN: req.params.isbn,
+      user_id:null,
+      due_date:null
+    })
+    .returning('*')
+    .then((data)=> res.status(200).json(data))
+    .catch((err) => res.send(err))
+  } else {
+    res.status(404).json({message: 'Please provide a title, author and ISBN to add a book'})
+    .catch((err) => res.send(err))
+  }
+  
+})
 
 module.exports = app
